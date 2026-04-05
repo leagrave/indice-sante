@@ -15,14 +15,16 @@ Développer un backend capable de :
 * déterminer les pathologies associées
 * orienter le patient vers les unités médicales
 * stocker l’historique des diagnostics
-* exposer une API REST propre et sécurisée
+* exposer une API REST sécurisée avec authentification
 
 ---
 
 ## Stack Technique
 
 * Java 21
-* Spring Boot
+* Spring Boot 3
+* Spring Security
+* JWT (JSON Web Token)
 * PostgreSQL
 * Docker
 * JPA / Hibernate
@@ -37,7 +39,7 @@ Développer un backend capable de :
 * Multiple de 5 → Fracture → Traumatologie
 * Multiple de 3 et 5 → Les deux
 
-Le système a été étendu avec d’autres pathologies pour enrichir la simulation.
+Le système a été enrichi avec plusieurs pathologies pour simuler un environnement médical réaliste.
 
 ---
 
@@ -50,6 +52,7 @@ Le projet suit une architecture en couches :
 * repository : accès aux données
 * model : entités JPA
 * dto : objets d’échange API
+* security : configuration JWT et filtres
 * exception : gestion centralisée des erreurs
 
 ---
@@ -67,10 +70,39 @@ Le système repose sur une séparation claire des responsabilités :
 
 ## Sécurité
 
-* validation des entrées côté service
-* exceptions personnalisées
-* séparation Entity / DTO
-* non-exposition des données sensibles (password)
+Le projet implémente une authentification moderne basée sur JWT :
+
+* authentification via `/auth/login`
+* génération d’un token JWT
+* sécurisation des endpoints via filtre Spring Security
+* accès protégé nécessitant un header `Authorization: Bearer <token>`
+
+### Accès aux endpoints
+
+| Endpoint         | Accès                      |
+| ---------------- | -------------------------- |
+| /auth/**         | public                     |
+| POST /patients   | public (création initiale) |
+| autres endpoints | protégés                   |
+
+---
+
+## Authentification
+
+### POST /auth/login
+
+```json
+{
+  "email": "test@test.com",
+  "password": "Test123"
+}
+```
+
+### Réponse
+
+```
+JWT TOKEN
+```
 
 ---
 
@@ -85,16 +117,16 @@ Le système repose sur une séparation claire des responsabilités :
 
 ### Patients
 
-* POST /patients → créer un patient
-* GET /patients → liste des patients
-* GET /patients/{id} → détail patient
+* POST /patients → créer un patient (public)
+* GET /patients → liste des patients (auth requis)
+* GET /patients/{id} → détail patient (auth requis)
 
 ---
 
 ### Diagnostic
 
 * POST /diagnostic → créer un diagnostic
-* GET /diagnostic/{patientId} → historique des diagnostics (tri décroissant)
+* GET /diagnostic/{patientId} → historique (tri décroissant)
 * GET /diagnostic/{patientId}/latest → dernier diagnostic
 
 ---
@@ -124,14 +156,40 @@ Le système repose sur une séparation claire des responsabilités :
 
 ---
 
-## Tests
+## Swagger
 
-Les tests couvrent :
+Documentation disponible :
 
-* logique métier (modulo 3 / 5)
-* cas limites
-* validation des entrées
-* gestion des erreurs
+http://localhost:8080/swagger-ui/index.html
+
+Swagger intègre l’authentification JWT via le bouton **Authorize**.
+
+---
+
+## Configuration JWT
+
+Le secret JWT est externalisé via variable d’environnement.
+
+### application.yml
+
+```yaml
+jwt:
+  secret: ${JWT_SECRET:default-secret-dev}
+```
+
+### Variable d’environnement
+
+#### Windows
+
+```bash
+setx JWT_SECRET "your-super-secret-key"
+```
+
+#### Linux / Mac
+
+```bash
+export JWT_SECRET="your-super-secret-key"
+```
 
 ---
 
@@ -151,21 +209,24 @@ docker-compose up -d
 
 ---
 
-## Documentation API
+## Tests
 
-Swagger est disponible à :
+Les tests couvrent :
 
-http://localhost:8080/swagger-ui.html
+* logique métier (modulo)
+* cas limites
+* validation des entrées
+* gestion des erreurs
 
 ---
 
 ## Améliorations possibles
 
-* hash des mots de passe (BCrypt)
-* pagination des résultats
-* authentification JWT
-* tests d’intégration
+* gestion des rôles (ADMIN / USER)
+* refresh token
+* pagination
+* logs de sécurité
+* monitoring
+* front-end (Vue.js)
 
 ---
-
-

@@ -7,6 +7,7 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.time.format.DateTimeFormatter;
 import java.util.Scanner;
@@ -14,9 +15,14 @@ import java.util.Scanner;
 @SpringBootApplication
 public class IndiceSanteApplication {
 
-	public static void main(String[] args) {
+    public IndiceSanteApplication(PasswordEncoder passwordEncoder) {
+        this.passwordEncoder = passwordEncoder;
+    }
+
+    public static void main(String[] args) {
 		SpringApplication.run(IndiceSanteApplication.class, args);
 	}
+	private final PasswordEncoder passwordEncoder;
 	DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
 
 	@Bean
@@ -39,7 +45,7 @@ public class IndiceSanteApplication {
 				System.out.println("0 - Quitter");
 
 				int choice = scanner.nextInt();
-				scanner.nextLine(); // flush
+				scanner.nextLine();
 
 				if (choice == 0) {
 					System.out.println("Au revoir !");
@@ -106,7 +112,7 @@ public class IndiceSanteApplication {
 					}
 				}
 
-				// DÉJÀ INSCRIT
+				// DEJÀ INSCRIT
 				if (choice == 2) {
 
 					System.out.println("\n=== Connexion ===");
@@ -122,7 +128,7 @@ public class IndiceSanteApplication {
 					}
 
 					var patient = patientOpt.get();
-					if (!patient.getUser().getPassword().equals(password)) {
+					if (!passwordEncoder.matches(password, patient.getUser().getPassword())) {
 						System.out.println("Mot de passe incorrect.");
 						continue;
 					}

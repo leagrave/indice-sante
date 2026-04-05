@@ -4,6 +4,7 @@ import com.hospital.indice_sante.exception.EmailAlreadyExistsException;
 import com.hospital.indice_sante.model.*;
 import com.hospital.indice_sante.repository.PatientRepository;
 import com.hospital.indice_sante.repository.UserRepository;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.UUID;
@@ -13,10 +14,12 @@ public class PatientService {
 
     private final PatientRepository patientRepository;
     private final UserRepository userRepository;
+    private final PasswordEncoder passwordEncoder;
 
-    public PatientService(PatientRepository patientRepository, UserRepository userRepository) {
+    public PatientService(PatientRepository patientRepository, UserRepository userRepository, PasswordEncoder passwordEncoder) {
         this.patientRepository = patientRepository;
         this.userRepository = userRepository;
+        this.passwordEncoder = passwordEncoder;
     }
 
     private String generateReference() {
@@ -28,7 +31,7 @@ public class PatientService {
         // création user
         User user = new User();
         user.setEmail(email);
-        user.setPassword(password);
+        user.setPassword(passwordEncoder.encode(password));
         user.setRole(Role.PATIENT);
 
         if (userRepository.findByEmail(email).isPresent()) {

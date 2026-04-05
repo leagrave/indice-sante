@@ -6,6 +6,7 @@ import com.hospital.indice_sante.exception.PatientNotFoundException;
 import com.hospital.indice_sante.model.*;
 import com.hospital.indice_sante.repository.DiagnosisRepository;
 import com.hospital.indice_sante.repository.PatientRepository;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -17,11 +18,13 @@ public class DiagnosisService {
 
     private final DiagnosisRepository diagnosisRepository;
     private final PatientRepository patientRepository;
+    private final PasswordEncoder passwordEncoder;
 
     public DiagnosisService(DiagnosisRepository diagnosisRepository,
-                            PatientRepository patientRepository) {
+                            PatientRepository patientRepository, PasswordEncoder passwordEncoder) {
         this.diagnosisRepository = diagnosisRepository;
         this.patientRepository = patientRepository;
+        this.passwordEncoder = passwordEncoder;
     }
 
     public DiagnosisResponseDTO analyze(int healthIndex, Long patientId) {
