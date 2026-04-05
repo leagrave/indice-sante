@@ -6,7 +6,6 @@ import com.hospital.indice_sante.exception.PatientNotFoundException;
 import com.hospital.indice_sante.model.*;
 import com.hospital.indice_sante.repository.DiagnosisRepository;
 import com.hospital.indice_sante.repository.PatientRepository;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -18,13 +17,11 @@ public class DiagnosisService {
 
     private final DiagnosisRepository diagnosisRepository;
     private final PatientRepository patientRepository;
-    private final PasswordEncoder passwordEncoder;
 
     public DiagnosisService(DiagnosisRepository diagnosisRepository,
-                            PatientRepository patientRepository, PasswordEncoder passwordEncoder) {
+                            PatientRepository patientRepository) {
         this.diagnosisRepository = diagnosisRepository;
         this.patientRepository = patientRepository;
-        this.passwordEncoder = passwordEncoder;
     }
 
     public DiagnosisResponseDTO analyze(int healthIndex, Long patientId) {
@@ -81,7 +78,7 @@ public class DiagnosisService {
         );
     }
 
-    private Set<Pathology> detectPathologies(int healthIndex) {
+    public Set<Pathology> detectPathologies(int healthIndex) {
 
         Set<Pathology> pathologies = new HashSet<>();
 
@@ -101,9 +98,9 @@ public class DiagnosisService {
         if (healthIndex % 21 == 0) pathologies.add(Pathology.EPILEPSIE);
 
         // Infection
-        if (healthIndex % 11 == 0) pathologies.add(Pathology.INFECTION_VIRALE);
-        if (healthIndex % 13 == 0) pathologies.add(Pathology.INFECTION_BACTERIENNE);
-        if (healthIndex % 17 == 0) pathologies.add(Pathology.FIEVRE);
+        if (healthIndex % 22 == 0) pathologies.add(Pathology.INFECTION_VIRALE);
+        if (healthIndex % 26 == 0) pathologies.add(Pathology.INFECTION_BACTERIENNE);
+        if (healthIndex % 34 == 0) pathologies.add(Pathology.FIEVRE);
 
         // Respiratoire
         if (healthIndex % 19 == 0) pathologies.add(Pathology.ASTHME);

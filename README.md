@@ -88,6 +88,7 @@ Le projet implémente une authentification moderne basée sur JWT :
 ---
 
 ## Authentification
+Lors du premier lancement de l’application, aucun utilisateur n’est présent en base de données. Il est donc nécessaire de créer un utilisateur (via la création d’un patient ou insertion en base) avant de pouvoir utiliser l’endpoint d’authentification.
 
 ### POST /auth/login
 
@@ -98,10 +99,16 @@ Le projet implémente une authentification moderne basée sur JWT :
 }
 ```
 
-### Réponse
+### Réponse token JWT
 
 ```
-JWT TOKEN
+eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+```
+
+### Swagger Authorize
+
+```
+Authorization: Bearer <eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...>
 ```
 
 ---
@@ -178,6 +185,7 @@ jwt:
 ```
 
 ### Variable d’environnement
+>Il est important de faire cette commande avant le lancement du projet.
 
 #### Windows
 
@@ -217,6 +225,12 @@ Les tests couvrent :
 * cas limites
 * validation des entrées
 * gestion des erreurs
+
+### Lancer les tests
+
+```bash
+./mvnw test
+```
 
 ---
 

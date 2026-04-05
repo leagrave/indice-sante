@@ -24,5 +24,8 @@ spring:
   jwt:
     secret: ${JWT_SECRET:default-secret-dev}
 
+  profiles:
+    active: dev
+
   server:
     port: 8080
