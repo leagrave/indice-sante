@@ -1,9 +1,12 @@
 package com.hospital.indice_sante.service;
 
+import com.hospital.indice_sante.exception.EmailAlreadyExistsException;
 import com.hospital.indice_sante.model.*;
 import com.hospital.indice_sante.repository.PatientRepository;
 import com.hospital.indice_sante.repository.UserRepository;
 import org.springframework.stereotype.Service;
+
+import java.util.UUID;
 
 @Service
 public class PatientService {
@@ -16,6 +19,10 @@ public class PatientService {
         this.userRepository = userRepository;
     }
 
+    private String generateReference() {
+        return "PAT-" + UUID.randomUUID().toString().substring(0, 6).toUpperCase();
+    }
+
     public Patient createPatient(String email, String password, String nom, String prenom, String nss) {
         validateInput(email, password, nom, prenom, nss);
         // création user
@@ -24,6 +31,10 @@ public class PatientService {
         user.setPassword(password);
         user.setRole(Role.PATIENT);
 
+        if (userRepository.findByEmail(email).isPresent()) {
+            throw new EmailAlreadyExistsException(email);
+        }
+
         User savedUser = userRepository.save(user);
 
         // création patient
@@ -31,10 +42,12 @@ public class PatientService {
         patient.setNom(nom);
         patient.setPrenom(prenom);
         patient.setNss(nss);
+        patient.setReference(generateReference());
         patient.setUser(savedUser);
 
         return patientRepository.save(patient);
     }
+
 
     private void validateInput(String email, String password,
                                String nom, String prenom, String nss) {
@@ -47,8 +60,11 @@ public class PatientService {
             throw new IllegalArgumentException("Invalid email format");
         }
 
-        if (password == null || password.length() < 4) {
-            throw new IllegalArgumentException("Password too short");
+        if (password == null || password.length() < 6
+                || !password.matches(".*[A-Za-z].*")
+                || !password.matches(".*\\d.*")) {
+
+            throw new RuntimeException("Password must be at least 6 characters with letters and numbers");
         }
 
         if (nom == null || nom.isBlank()) {
@@ -59,8 +75,10 @@ public class PatientService {
             throw new IllegalArgumentException("Prenom is required");
         }
 
-        if (nss == null || nss.length() < 5) {
-            throw new IllegalArgumentException("Invalid NSS");
+        if (nss != null && !nss.isBlank()) {
+            if (nss.length() < 10) {
+                throw new RuntimeException("Invalid NSS format");
+            }
         }
     }
 }

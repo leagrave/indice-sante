@@ -14,8 +14,11 @@ public class Patient {
     @Column(nullable = false)
     private String prenom;
 
-    @Column(nullable = false, unique = true)
+    @Column(unique = true)
     private String nss;
+
+    @Column(unique = true, nullable = false)
+    private String reference;
 
     @OneToOne
     @JoinColumn(name = "user_id", nullable = false, unique = true)
@@ -41,6 +44,10 @@ public class Patient {
         return nss;
     }
 
+    public String getReference() {
+        return reference;
+    }
+
     public User getUser() {
         return user;
     }
@@ -56,6 +63,10 @@ public class Patient {
 
     public void setNss(String nss) {
         this.nss = nss;
+    }
+
+    public void setReference(String reference) {
+        this.reference = reference;
     }
 
     public void setUser(User user) {

@@ -18,8 +18,7 @@ public class Diagnosis {
     @Column(nullable = false)
     private int healthIndex;
 
-    @ElementCollection(targetClass = Pathology.class)
-    @Enumerated(EnumType.STRING)
+    @ElementCollection(fetch = FetchType.EAGER)
     private List<Pathology> pathologies;
 
     private LocalDateTime createdAt;

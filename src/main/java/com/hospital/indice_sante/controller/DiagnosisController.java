@@ -19,6 +19,7 @@ public class DiagnosisController {
         this.diagnosisService = diagnosisService;
     }
 
+    @Operation(summary = "Création d'un diagnostics pour un patient via son id et d'un index de santé")
     @PostMapping
     public DiagnosisResponseDTO createDiagnostic(@RequestBody CreateDiagnosisDTO dto) {
 

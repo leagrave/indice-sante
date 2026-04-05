@@ -121,11 +121,14 @@ public class DiagnosisService {
 
     // Mapping unités médicales
     private Set<MedicalUnit> mapToMedicalUnits(Set<Pathology> pathologies) {
-
-        return Arrays.stream(MedicalUnit.values())
+        Set<MedicalUnit> units = Arrays.stream(MedicalUnit.values())
                 .filter(unit -> pathologies.stream()
                         .anyMatch(p -> unit.getPathologies().contains(p)))
                 .collect(Collectors.toSet());
+        if (units.isEmpty()) {
+            units.add(MedicalUnit.GENERAL);
+        }
+        return units;
     }
 
     // Validation

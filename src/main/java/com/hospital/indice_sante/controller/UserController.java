@@ -3,6 +3,7 @@ package com.hospital.indice_sante.controller;
 import com.hospital.indice_sante.dto.UserResponseDTO;
 import com.hospital.indice_sante.model.User;
 import com.hospital.indice_sante.service.UserService;
+import io.swagger.v3.oas.annotations.Operation;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -18,6 +19,7 @@ public class UserController {
     }
 
     // GET all users
+    @Operation(summary = "Récupération de tous les mails des utilisateurs")
     @GetMapping
     public List<UserResponseDTO> getAllUsers() {
         return userService.getAllUsers()
@@ -27,6 +29,7 @@ public class UserController {
     }
 
     // GET user by id
+    @Operation(summary = "Récupération du mail d'un utilisateur par son id")
     @GetMapping("/{id}")
     public UserResponseDTO getUserById(@PathVariable Long id) {
         User user = userService.getUserById(id);

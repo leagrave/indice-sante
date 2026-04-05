@@ -11,11 +11,15 @@ spring:
   jpa:
     hibernate:
       ddl-auto: update
-    show-sql: true
+    show-sql: false
+    properties:
+      hibernate:
+        format_sql: false
 
-  properties:
-    hibernate:
-      format_sql: true
+  logging:
+    level:
+      org.hibernate.SQL: OFF
+      org.hibernate.type.descriptor.sql: OFF
 
-server:
-  port: 8080
+  server:
+    port: 8080
